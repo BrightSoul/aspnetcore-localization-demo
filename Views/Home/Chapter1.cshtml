@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = localizer["Chapter1Title"];
+    //Il servizio IStringLocalizer si trova nel namespace Microsoft.Extensions.Localization
+    //Quindi si dovrebbe aggiungere uno @using Microsoft.Extensions.Localization alla view /Views/Shared/_ViewImports.cshtml
+}
+@inject IStringLocalizer localizer
+
+<div>
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <p>@localizer["Chapter1Text"]</p>
+    <img src="/drawing.jpg">
+</div>
