@@ -117,13 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Chapter1Text" xml:space="preserve">
-    <value>Lorsque j'avais six ans j'ai vu, une fois, une magnifique image, dans un livre sur la Forêt Vierge qui s'appelait "Histoires Vécues". Ça représentait un serpent boa qui avalait un fauve. Voilà la copie du dessin.</value>
-  </data>
-  <data name="Chapter1Title" xml:space="preserve">
-    <value>Premier chapitre</value>
-  </data>
   <data name="Language" xml:space="preserve">
     <value>Français</value>
+  </data>
+  <data name="Chapter1.Title" xml:space="preserve">
+    <value>Chapitre 1</value>
+  </data>
+  <data name="Chapter1.Text" xml:space="preserve">
+    <value>Lorsque j'avais six ans j'ai vu, une fois, une magnifique image, dans un livre sur la Forêt Vierge qui s'appelait "Histoires Vécues". Ça représentait un serpent boa qui avalait un fauve. Voilà la copie du dessin.</value>
+  </data>
+  <data name="Chapter2.Title" xml:space="preserve">
+    <value>Chapitre 2</value>
+  </data>
+  <data name="Chapter2.Text" xml:space="preserve">
+    <value>J'ai ainsi vécu seul, sans personne avec qui parler 'véritablement, jusqu'à une panne dans le désert du Sahara, il y a six ans. Quelque chose s'était cassée dans mon moteur.</value>
+  </data>
+  <!-- These values will be used to localize paths, such as /Livre/Capitre1 -->
+  <data name="Routing.Book" xml:space="preserve">
+    <value>Livre</value>
+  </data>
+  <data name="Routing.Book.Chapter1" xml:space="preserve">
+    <value>Chapitre1</value>
+  </data>
+  <data name="Routing.Book.Chapter2" xml:space="preserve">
+    <value>Chapitre2</value>
+  </data>
+  <data name="Routing.Home" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="Routing.Home.Index" xml:space="preserve">
+    <value>Index</value>
   </data>
 </root>

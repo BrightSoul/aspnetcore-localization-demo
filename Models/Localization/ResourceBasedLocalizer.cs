@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Extensions.Localization;
 
-namespace AspnetcoreLocalizationDemo.Models.Services
+namespace AspnetcoreLocalizationDemo.Models.Localization
 {
-    public class CustomLocalizer : IStringLocalizer
+    public class ResourceBasedLocalizer : IStringLocalizer
     {
         private readonly IStringLocalizer localizer;
-        public CustomLocalizer(IStringLocalizerFactory localizerFactory)
+        public ResourceBasedLocalizer(IStringLocalizerFactory localizerFactory)
         {
             this.localizer = localizerFactory.Create("Shared", System.Reflection.Assembly.GetExecutingAssembly().FullName);
         }

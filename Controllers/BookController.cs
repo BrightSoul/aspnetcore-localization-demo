@@ -9,11 +9,15 @@ using AspnetcoreLocalizationDemo.Models;
 
 namespace AspnetcoreLocalizationDemo.Controllers
 {
-    public class HomeController : Controller
+    public class BookController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Chapter1()
         {
-            return RedirectToAction("Chapter1", "Book", new { language = "it" });
+            return View();
+        }
+        public IActionResult Chapter2()
+        {
+            return View();
         }
     }
 }

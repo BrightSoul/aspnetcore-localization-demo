@@ -117,15 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Chapter1Text" xml:space="preserve">
-    <value>Un tempo lontano, quando avevo sei anni, in un libro sulle foreste primordiali, intitolato “Storie vissute della natura”, vidi un magnifico disegno.  
-Rappresentava un serpente boa nell’atto di inghiottire un animale.  
-Eccovi la copia del disegno.</value>
-  </data>
-  <data name="Chapter1Title" xml:space="preserve">
-    <value>Capitolo 1</value>
-  </data>
   <data name="Language" xml:space="preserve">
-    <value>Italiano</value>
+    <value>English</value>
+  </data>
+  <data name="Chapter1.Title" xml:space="preserve">
+    <value>Chapter 1</value>
+  </data>
+  <data name="Chapter1.Text" xml:space="preserve">
+    <value>Once when I was six years old I saw a magnificent picture in a book, called 'True Stories from Nature', about the primeval forest. It was a picture of a boa constrictor in the act of swallowing an animal.</value>
+  </data>
+  <data name="Chapter2.Title" xml:space="preserve">
+    <value>Chapter 2</value>
+  </data>
+  <data name="Chapter2.Text" xml:space="preserve">
+    <value>So I lived my life alone, without anyone that I could really talk to, until I had an accident with my plane in the Desert of Sahara, six years ago. Something was broken in my engine.</value>
+  </data>
+  <!-- These values will be used to localize paths, such as /Book/Chapter1 -->
+  <data name="Routing.Book" xml:space="preserve">
+    <value>Book</value>
+  </data>
+  <data name="Routing.Book.Chapter1" xml:space="preserve">
+    <value>Chapter1</value>
+  </data>
+  <data name="Routing.Book.Chapter2" xml:space="preserve">
+    <value>Chapter2</value>
+  </data>
+  <data name="Routing.Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Routing.Home.Index" xml:space="preserve">
+    <value>Index</value>
   </data>
 </root>
