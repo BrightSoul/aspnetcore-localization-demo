@@ -3,6 +3,8 @@ Un'applicazione dimostrativa ASP.NET Core 3.1 che localizza sia i contenuti che 
 
 ![demo.gif](demo.gif)
 
+> Nel ramo `content-only` di questo repository si trova una versione semplificata di questo progetto che include solo la localizzazione dei contenuti e non dei percorsi.
+
 ## Avviare l'applicazione
 È sufficiente clonare il repository o scaricare il pacchetto zip. Poi aprire il progetto con Visual Studio o Visual Studio Code e premere `F5` per avviare il debug.
 
