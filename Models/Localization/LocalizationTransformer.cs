@@ -6,11 +6,11 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
-using System.Reflection;
 using System.Globalization;
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace AspnetcoreLocalizationDemo.Models.Localization
 {
@@ -55,10 +55,11 @@ namespace AspnetcoreLocalizationDemo.Models.Localization
 
             var localizer = httpContext.RequestServices.GetService<IStringLocalizer>();
             var supportedCultures = httpContext.RequestServices.GetService<IEnumerable<CultureInfo>>().ToList();
+            var actionDescriptor = httpContext.RequestServices.GetService<IActionDescriptorCollectionProvider>();
 
             // Ottengo l'elenco dei controller in questo assembly
-            // ATTENZIONE: questo significa che non troverà i controller se si trovano in altri progetti referenziati da questo
-            var controllerTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToList();
+            var actionDescriptorGroups = actionDescriptor.ActionDescriptors.Items.OfType<ControllerActionDescriptor>().GroupBy(descriptor => descriptor.ControllerName).ToList();
+
             // Mi creo un dizionario per la risoluzione inversa, cioè Libro => Book e Capitolo1 => Chapter1
             // perché il localizer riesce solo a tradurmi Book => Libro e Chapter1 => Capitolo1
             var reverseMap = new Dictionary<string, string>();
@@ -68,19 +69,17 @@ namespace AspnetcoreLocalizationDemo.Models.Localization
             {
                 // Aggiungo la risoluzione inversa dei nomi dei controller per tutte le lingue
                 // Per qualche motivo Microsoft ha reso obsoleto il metodo WithCulture perciò questo codice andrà sostituito in versioni successive alla 3.x
-                var currentLocalizer = localizer.WithCulture(culture);
-                controllerTypes.ForEach(type =>
+                var specificCultureLocalizer = localizer.WithCulture(culture);
+                actionDescriptorGroups.ForEach(group =>
                 {
-
-                    string controllerName = type.Name.Replace("Controller", "");
-                    string localizedControllerName = currentLocalizer.GetString($"Routing.{controllerName}");
+                    string controllerName = group.Key;
+                    string localizedControllerName = specificCultureLocalizer.GetString($"Routing.{controllerName}");
                     reverseMap.Add(MakeControllerKey(culture, localizedControllerName), controllerName);
                     // Aggiungo le sue action
-                    var actions = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.InvokeMethod).Where(action => !action.IsSpecialName && !action.GetCustomAttributes().Any(attribute => attribute is NonActionAttribute)).ToList();
-                    actions.ForEach(action =>
+                    group.ToList().ForEach(actionDescriptor =>
                     {
-                        string actionName = action.Name;
-                        string localizedActionName = currentLocalizer.GetString($"Routing.{controllerName}.{actionName}");
+                        string actionName = actionDescriptor.ActionName;
+                        string localizedActionName = specificCultureLocalizer.GetString($"Routing.{controllerName}.{actionName}");
                         reverseMap.Add(MakeActionKey(culture, localizedControllerName, localizedActionName), actionName);
                     });
                 });

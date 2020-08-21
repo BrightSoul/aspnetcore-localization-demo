@@ -153,7 +153,7 @@ Questo _transformer_ si occupa di creare una _reverse map_ ovvero un dizionario 
 
 > Il servizio `IStringLocalizer` permette solo la localizzazione dal nome originale al nome localizzato e non viceversa.
 
-La _reverse map_ viene creata alla prima richiesta inviata da un utente e tenuta in cache per le successive richieste. Viene creata usando la reflection per trovare tutti i controller nell'assembly corrente. Poi, vengono localizzati i loro nomi e i nomi delle loro action, in ognuna delle Culture supportate dall'applicazione.
+La _reverse map_ viene creata alla prima richiesta inviata da un utente e tenuta in cache per le successive richieste. Viene creata usando il servizio di ASP.NET Core `IActionDescriptorCollectionProvider` che restituisce i dettagli di tutte le action trovate nel progetto. Poi, vengono localizzati i loro nomi e i nomi dei loro controller, in ognuna delle Culture supportate dall'applicazione.
 
 > Come conseguenza di ciò, la **prima richiesta potrebbe richiedere più tempo a completarsi**, soprattutto se il progetto contiene parecchi Controller e parecchie Culture supportate. Dovremmo essere nell'ordine dei decimi di secondo ma vale la pena misurarlo con la classe `Stopwatch`.
 
@@ -164,7 +164,6 @@ Questa demo *NON* copre:
  * Aree;
  * Razor Pages;
  * Navigazioni originate da form;
- * Controller presenti in altri progetti correlati;
  * Generazione del tag canonical.
 
 > **ATTENZIONE: Il codice dell'applicazione non è pronto per essere usato in produzione. Oltretutto, non è coperto da test automatici.**.
