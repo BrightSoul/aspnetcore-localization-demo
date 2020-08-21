@@ -39,8 +39,6 @@ namespace AspnetcoreLocalizationDemo
                 options.ResourcesPath = "Resources";
             });
             services.AddTransient<IStringLocalizer, ResourceBasedLocalizer>();
-            services.AddSingleton<IEnumerable<CultureInfo>>(supportedCultures);
-            services.AddSingleton<LocalizationTransformer>();
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -51,12 +49,6 @@ namespace AspnetcoreLocalizationDemo
                 // presente nel route pattern (vedi la chiamata a endpoints.MapControllerRoute che si trova in questo file, più in basso)
                 options.RequestCultureProviders.Insert(0, new RouteRequestCultureProvider(supportedCultures));
             });
-
-            // Sostituisco il Link Generator di default con uno personalizzato, in modo da poter riscrivere gli URL
-            var serviceProvider = services.BuildServiceProvider();
-            var defaultLinkGenerator = serviceProvider.GetService<LinkGenerator>();
-            var stringLocalizer = serviceProvider.GetService<IStringLocalizer>();
-            services.AddSingleton<LinkGenerator>(new LocalizedLinkGenerator(defaultLinkGenerator, stringLocalizer, supportedCultures));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -79,11 +71,6 @@ namespace AspnetcoreLocalizationDemo
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDynamicControllerRoute<LocalizationTransformer>(
-                    pattern: "{language=en}/{controller=Home}/{action=Index}/{id?}");
-
-                // Per il momento è necessario abilitare anche la "normale" controller route, a causa di questa issue
-                // https://github.com/dotnet/aspnetcore/issues/16965
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{language=en}/{controller=Home}/{action=Index}/{id?}");
