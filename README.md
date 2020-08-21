@@ -63,6 +63,24 @@ services.Configure<RequestLocalizationOptions(options =>
 ```
 In questo modo, se l'utente richiede `/it/Libro/Capitolo1`, verrà impostata la Culture italiana per la richiesta corrente. Se invece richiede `/en/Book/Chapter1`, verrà impostata la Culture inglese.
 
+### Culture supportate
+Per questa demo, l'elenco delle Culture supportate è cablato in un campo privato di [Startup.cs](Startup.cs).
+```csharp
+private readonly List<CultureInfo>supportedCultures = new List<CultureInfo> {
+    new CultureInfo("en"),
+    new CultureInfo("it"),
+    new CultureInfo("fr")
+};
+```
+La prima delle Culture in elenco viene usata come predefinita.
+Questo elenco è stato anche registrato per la dependency injection in questo modo, dal metodo `ConfigureServices` di [Startup.cs](Startup.cs)
+```csharp
+services.AddSingleton<IEnumerable<CultureInfo>>(supportedCultures);
+```
+Perciò può essere ricevuto da altri componenti dell'applicazione come parametro di tipo `IEnumerable<CultureInfo>` nel loro costruttore.
+
+> TODO: In produzione sarebbe meglio esporre questo elenco tramite un servizio apposito, che abbia un nome più intellegibile.
+
 ### Visualizzazione dei testi localizzati
 Impostata correttamente una Culture, nelle view Razor viene usato il servizio di ASP.NET Core `IStringLocalizer` che permette di ottenere una stringa localizzata dal file di risorse relativo alla Culture della richiesta corrente. La sua implementazione concreta si trova nel file [Models/Localization/ResourceBasedLocalizer.cs](Models/Localization/ResourceBasedLocalizer.cs).
 
@@ -102,11 +120,22 @@ Ogni volta che si deve generare un link, ad esempio mediante gli attributi `asp-
 
 Affinché i link vengano localizzati, il `LinkGenerator` è stato "avvolto" dall'implementazione che si trova in [Models/Localization/LocalizedLinkGenerator.cs](Models/Localization/LocalizedLinkGenerator.cs) e che compie le necessarie localizzazioni prima che il `LinkGenerator` di default esegua la sua logica.
 
-Perciò, un tag `a` come il seguente:
+Ecco come è stato registrato per la dependency injection nel metodo `ConfigureServices` di [Startup.cs](Startup.cs).
+```csharp
+var serviceProvider = services.BuildServiceProvider();
+// Ottengo un riferimento al LinkGenerator originale
+var defaultLinkGenerator = serviceProviderGetService<LinkGenerator>();
+var stringLocalizer = serviceProviderGetService<IStringLocalizer>();
+// Lo sostituisco con un'implementazione personalizzata che lo avvolge
+services.AddSingleton<LinkGenerator>(new LocalizedLinkGenerator(defaultLinkGenerator,stringLocalizer, supportedCultures));
+```
+Purtroppo non c'è un modo più semplice di registrarlo perché l'implementazione concreta di Microsoft, il [DefaultLinkGenerator](https://github.com/dotnet/aspnetcore/blob/release/3.1/src/Http/Routing/src/DefaultLinkGenerator.cs), è una classe `internal sealead` da cui perciò non si può derivare.
+
+Comunque, a questo punto, un tag `a` come il seguente:
 ```html
 <a asp-route-language="it" asp-controller="Book" asp-action="Chapter1">1</a>
 ```
-Produrrà il seguente output:
+Produrrà il seguente output, ovvero il risultato voluto.
 ```html
 <a href="/it/Libro/Capitolo1">1</a>
 ```
@@ -115,13 +144,18 @@ Produrrà il seguente output:
 
 Avendo configurato una _Dynamic Controller Route_ abbiamo indicato il tipo di un _transformer_ che si occuperà di riscrivere i _route values_ di `action` e `controller`, prima che la selezione dell'endpoint avvenga.
 
-Tale _transformer_ è implementato nel file [Models/Localization/LocalizationTransformer.cs](Models/Localization/LocalizationTransformer.cs) e si occupa di creare una _reverse map_ ovvero un dizionario per riconvertire i nomi di controller e action dal loro nome localizzato al loro nome originale. In questo modo, il nome localizzato `Libro` può essere ricondotto a `Book`, che è l'effettivo nome del controller [Models/Controllers/BookController.cs](Models/Controllers/BookController.cs).
+Tale _transformer_ è implementato nel file [Models/Localization/LocalizationTransformer.cs](Models/Localization/LocalizationTransformer.cs) ed è stato registrato nel metodo `ConfigureServices` in [Startup.cs](Startup.cs) per la dependency injection in questo modo:
+
+```csharp
+services.AddSingleton<LocalizationTransformer>();
+```
+Questo _transformer_ si occupa di creare una _reverse map_ ovvero un dizionario per riconvertire i nomi di controller e action dal loro nome localizzato al loro nome originale. Cioè, grazie alla _reverse map_ il nome localizzato `Libro` può essere ricondotto a `Book`, che è l'effettivo nome del controller [Models/Controllers/BookController.cs](Models/Controllers/BookController.cs).
 
 > Il servizio `IStringLocalizer` permette solo la localizzazione dal nome originale al nome localizzato e non viceversa.
 
-La _reverse map_ viene creata alla prima richiesta inviata da un utente usando la reflection per trovare tutti i controller nell'assembly corrente e determinare la localizzazione di ciascuno di essi e di ciascuna delle loro action, per tutte le Culture supportate dall'applicazione.
+La _reverse map_ viene creata alla prima richiesta inviata da un utente e tenuta in cache per le successive richieste. Viene creata usando la reflection per trovare tutti i controller nell'assembly corrente. Poi, vengono localizzati i loro nomi e i nomi delle loro action, in ognuna delle Culture supportate dall'applicazione.
 
-> Come conseguenza di ciò, la **prima richiesta potrebbe richiedere più tempo a completarsi**, soprattutto se il progetto contiene parecchi Controller e parecchie Culture supportate. Dovremmo essere nell'ordine dei decimi di secondo, comunque.
+> Come conseguenza di ciò, la **prima richiesta potrebbe richiedere più tempo a completarsi**, soprattutto se il progetto contiene parecchi Controller e parecchie Culture supportate. Dovremmo essere nell'ordine dei decimi di secondo ma vale la pena misurarlo con la classe `Stopwatch`.
 
 Per realizzare la _reverse map_, viene usato il metodo `WithCulture` del servizio `IStringLocalizer` che è stato marcato da Microsoft come obsoleto. Non è ancora chiaro come verrà sostituito nella prossima release di ASP.NET Core. La discussione è aperta nella [Issue #7756](https://github.com/dotnet/aspnetcore/issues/7756).
 
