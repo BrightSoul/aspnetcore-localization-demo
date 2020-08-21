@@ -55,10 +55,10 @@ namespace AspnetcoreLocalizationDemo.Models.Localization
 
             var localizer = httpContext.RequestServices.GetService<IStringLocalizer>();
             var supportedCultures = httpContext.RequestServices.GetService<IEnumerable<CultureInfo>>().ToList();
-            var actionDescriptor = httpContext.RequestServices.GetService<IActionDescriptorCollectionProvider>();
+            var actionDescriptorProvider = httpContext.RequestServices.GetService<IActionDescriptorCollectionProvider>();
 
             // Ottengo l'elenco dei controller in questo assembly
-            var actionDescriptorGroups = actionDescriptor.ActionDescriptors.Items.OfType<ControllerActionDescriptor>().GroupBy(descriptor => descriptor.ControllerName).ToList();
+            var actionDescriptorGroups = actionDescriptorProvider.ActionDescriptors.Items.OfType<ControllerActionDescriptor>().GroupBy(descriptor => descriptor.ControllerName).ToList();
 
             // Mi creo un dizionario per la risoluzione inversa, cioè Libro => Book e Capitolo1 => Chapter1
             // perché il localizer riesce solo a tradurmi Book => Libro e Chapter1 => Capitolo1
