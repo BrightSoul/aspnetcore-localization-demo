@@ -1,6 +1,13 @@
 ﻿@{
-    //Il servizio IStringLocalizer si trova nel namespace Microsoft.Extensions.Localization
-    //Quindi è stato aggiunto uno @using Microsoft.Extensions.Localization a /Views/Shared/_ViewImports.cshtml
+    // Il servizio IStringLocalizer si trova nel namespace Microsoft.Extensions.Localization
+    // Quindi è stato aggiunto uno @using Microsoft.Extensions.Localization a /Views/Shared/_ViewImports.cshtml
+
+    // Determiniamo qual è il capitolo corrente così che possiamo evidenziare il link relativo
+    var currentChapter = "";
+    if (Context.Request.RouteValues["controller"] as string == "Book")
+    {
+        currentChapter = Context.Request.RouteValues["action"] as string;
+    }
 }
 @inject IStringLocalizer localizer
 <!DOCTYPE html>
@@ -24,10 +31,10 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link active" asp-controller="Book" asp-action="Chapter1">Chapter1</a>
+                            <a class="@(currentChapter == "Chapter1" ? "nav-link active" : "nav-link")" asp-controller="Book" asp-action="Chapter1">@localizer["Chapter1.Title"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Book" asp-action="Chapter2">Chapter2</a>
+                            <a class="@(currentChapter == "Chapter2" ? "nav-link active" : "nav-link")" asp-controller="Book" asp-action="Chapter2">@localizer["Chapter2.Title"]</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
