@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace AspnetcoreLocalizationDemo.Models.Localization
 {
-    public class CustomLinkGenerator : LinkGenerator
+    public class LocalizedLinkGenerator : LinkGenerator
     {
         private readonly LinkGenerator linkGenerator;
         public IHttpContextAccessor Accessor { get; }
         private readonly IEnumerable<CultureInfo> supportedCultures;
         private readonly IStringLocalizer stringLocalizer;
 
-        public CustomLinkGenerator(LinkGenerator linkGenerator, IStringLocalizer stringLocalizer, IEnumerable<CultureInfo> supportedCultures)
+        public LocalizedLinkGenerator(LinkGenerator linkGenerator, IStringLocalizer stringLocalizer, IEnumerable<CultureInfo> supportedCultures)
         {
             this.stringLocalizer = stringLocalizer;
             this.supportedCultures = supportedCultures;

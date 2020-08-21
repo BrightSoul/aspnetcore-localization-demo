@@ -42,21 +42,21 @@ namespace AspnetcoreLocalizationDemo
             services.AddSingleton<IEnumerable<CultureInfo>>(supportedCultures);
             services.AddSingleton<LocalizationTransformer>();
 
-            services.Configure<RequestLocalizationOptions>(ops =>
+            services.Configure<RequestLocalizationOptions>(options =>
             {
-                ops.DefaultRequestCulture = new RequestCulture(supportedCultures[0].TwoLetterISOLanguageName);
-                ops.SupportedCultures = supportedCultures;
-                ops.SupportedUICultures = supportedCultures;
+                options.DefaultRequestCulture = new RequestCulture(supportedCultures[0].TwoLetterISOLanguageName);
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
                 // Aggiungo questo culture provider che determinerà la Culture corrente in base al frammento "language"
                 // presente nel route pattern (vedi la chiamata a endpoints.MapControllerRoute che si trova in questo file, più in basso)
-                ops.RequestCultureProviders.Insert(0, new RouteRequestCultureProvider(supportedCultures));
+                options.RequestCultureProviders.Insert(0, new RouteRequestCultureProvider(supportedCultures));
             });
 
             // Sostituisco il Link Generator di default con uno personalizzato, in modo da poter riscrivere gli URL
             var serviceProvider = services.BuildServiceProvider();
             var defaultLinkGenerator = serviceProvider.GetService<LinkGenerator>();
             var stringLocalizer = serviceProvider.GetService<IStringLocalizer>();
-            services.AddSingleton<LinkGenerator>(new CustomLinkGenerator(defaultLinkGenerator, stringLocalizer, supportedCultures));
+            services.AddSingleton<LinkGenerator>(new LocalizedLinkGenerator(defaultLinkGenerator, stringLocalizer, supportedCultures));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -73,7 +73,8 @@ namespace AspnetcoreLocalizationDemo
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
-            // ASP.NET Core selezionerà la Culture in base a dei RequestCultureProvider. Vedi /Models/Localization/RouteRequestCultureProvider
+            // ASP.NET Core selezionerà la Culture per la richiesta corrente in base a dei RequestCultureProvider.
+            // Vedi /Models/Localization/RouteRequestCultureProvider.cs
             app.UseRequestLocalization();
 
             app.UseEndpoints(endpoints =>
@@ -85,7 +86,7 @@ namespace AspnetcoreLocalizationDemo
                 // https://github.com/dotnet/aspnetcore/issues/16965
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{language=it}/{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{language=en}/{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
