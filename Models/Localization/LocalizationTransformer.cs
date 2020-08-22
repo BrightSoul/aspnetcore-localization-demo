@@ -76,9 +76,8 @@ namespace AspnetcoreLocalizationDemo.Models.Localization
                     string localizedControllerName = specificCultureLocalizer.GetString($"Routing.{controllerName}");
                     reverseMap.Add(MakeControllerKey(culture, localizedControllerName), controllerName);
                     // Aggiungo le sue action
-                    group.ToList().ForEach(actionDescriptor =>
+                    group.Select(actionDescriptor => actionDescriptor.ActionName).Distinct().ToList().ForEach(actionName =>
                     {
-                        string actionName = actionDescriptor.ActionName;
                         string localizedActionName = specificCultureLocalizer.GetString($"Routing.{controllerName}.{actionName}");
                         reverseMap.Add(MakeActionKey(culture, localizedControllerName, localizedActionName), actionName);
                     });
