@@ -132,6 +132,21 @@
   <data name="Chapter2.Text" xml:space="preserve">
     <value>So I lived my life alone, without anyone that I could really talk to, until I had an accident with my plane in the Desert of Sahara, six years ago. Something was broken in my engine.</value>
   </data>
+  <data name="Comments.Title" xml:space="preserve">
+    <value>Comments</value>
+  </data>
+  <data name="Comments.Show" xml:space="preserve">
+    <value>Show comments</value>
+  </data>
+  <data name="Comments.Hide" xml:space="preserve">
+    <value>Hide comments</value>
+  </data>
+  <data name="Comments.Placeholder" xml:space="preserve">
+    <value>Type a comment...</value>
+  </data>
+  <data name="Comments.Send" xml:space="preserve">
+    <value>Send comment</value>
+  </data>
   <!-- These values will be used to localize paths, such as /Book/Chapter1 -->
   <data name="Routing.Book" xml:space="preserve">
     <value>Book</value>
@@ -147,5 +162,8 @@
   </data>
   <data name="Routing.Home.Index" xml:space="preserve">
     <value>Index</value>
+  </data>
+  <data name="Query.comments" xml:space="preserve">
+    <value>comments</value>
   </data>
 </root>

@@ -13,6 +13,9 @@ namespace AspnetcoreLocalizationDemo.Models.Localization
         public IHttpContextAccessor Accessor { get; }
         private readonly IEnumerable<CultureInfo> supportedCultures;
         private readonly IStringLocalizer stringLocalizer;
+        const string action = "action";
+        const string controller = "controller";
+        const string language = "language";
 
         public LocalizedLinkGenerator(LinkGenerator linkGenerator, IStringLocalizer stringLocalizer, IEnumerable<CultureInfo> supportedCultures)
         {
@@ -24,22 +27,43 @@ namespace AspnetcoreLocalizationDemo.Models.Localization
         private void RewriteValuesDictionary(RouteValueDictionary values)
         {
             var language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-            if (values.ContainsKey("language"))
+            if (values.ContainsKey(LocalizedLinkGenerator.language))
             {
-                language = values["language"] as string;
+                language = values[LocalizedLinkGenerator.language] as string;
             }
             var culture = supportedCultures.FirstOrDefault(culture => culture.TwoLetterISOLanguageName == language as string) ?? CultureInfo.CurrentCulture;
-            var currentLocalizer = stringLocalizer.WithCulture(culture);
-            var controllerKey = $"Routing.{values["controller"]}";
-            var actionKey = $"{controllerKey}.{values["action"]}";
-            var localizedController = currentLocalizer.GetString(controllerKey);
-            var localizedAction = currentLocalizer.GetString(actionKey);
+            var currentLanguageLocalizer = stringLocalizer.WithCulture(culture);
+            var controllerLocalizationKey = $"Routing.{values[controller]}";
+            var actionLocalizationKey = $"{controllerLocalizationKey}.{values[action]}";
+            var localizedController = currentLanguageLocalizer.GetString(controllerLocalizationKey);
+            var localizedAction = currentLanguageLocalizer.GetString(actionLocalizationKey);
             if (localizedController.ResourceNotFound || localizedAction.ResourceNotFound)
             {
                 return;
             }
-            values["controller"] = localizedController.Value;
-            values["action"] = localizedAction.Value;
+            foreach (var key in values.Keys)
+            {
+                switch(key)
+                {
+                    case controller:
+                        values[controller] = localizedController.Value;
+                        break;
+                    case action:
+                        values[action] = localizedAction.Value;
+                        break;
+                    case LocalizedLinkGenerator.language:
+                        break;
+                    default:
+                        var localizedKey = currentLanguageLocalizer.GetString($"Query.{key}");
+                        if (!localizedKey.ResourceNotFound)
+                        {
+                            var value = values[key];
+                            values.Remove(key);
+                            values.Add(localizedKey, value);
+                        }
+                        break;
+                }
+            }
         }
 
         public override string GetPathByAddress<TAddress>(HttpContext httpContext, TAddress address, RouteValueDictionary values, RouteValueDictionary ambientValues = null, PathString? pathBase = null, FragmentString fragment = default, LinkOptions options = null)

@@ -1,0 +1,28 @@
+@model AspnetcoreLocalizationDemo.Models.ViewModels.CommentsViewModel
+@inject IStringLocalizer localizer
+
+@if (Model.Shown)
+{
+    <h3>@localizer["Comments.Title"]</h3>
+    @if (Model.Results.Count > 0)
+    {
+        <ol>
+        @foreach(var comment in Model.Results)
+        {
+            <li>@comment</li>
+        }
+        </ol>
+    }
+    <form class="input-group mb-3" method="post" asp-action="Comment">
+        <input type="hidden" asp-for="Chapter">
+        <input type="text" asp-for="Comment" class="form-control" placeholder="@(localizer["Comments.Placeholder"])">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">@localizer["Comments.Send"]</button>
+        </div>
+    </form>
+    <a asp-route-comments="">@localizer["Comments.Hide"]</a>
+}
+else
+{
+    <a asp-route-comments="1">@localizer["Comments.Show"]</a>
+}

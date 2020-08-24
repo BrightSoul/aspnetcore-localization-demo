@@ -57,13 +57,16 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @if (TempData["Error"] != null) {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - AspnetcoreLocalizationDemo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            AspnetcoreLocalizationDemo
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

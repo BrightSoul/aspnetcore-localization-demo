@@ -31,11 +31,15 @@ All'interno di ciascun file di risorse si trovano sia le chiavi per i contenuti 
   <data name="Routing.Book.Chapter1" xml:space="preserve">
     <value>Capitolo1</value>
   </data>
+  <data name="Query.comments" xml:space="preserve">
+    <value>commenti</value>
+  </data>
 ```
 
 Come si vede:
  * `Chapter2.Title` e `Chapter2.Text` sono chiavi associate a testi che appariranno nelle pagine dell'applicazione;
- * `Routing.Book` e `Routing.Book.Chapter1` identificano rispettivamente i nomi che il controller `BookController` e la sua action `Chapter1` assumeranno nella barra degli indirizzi del browser.
+ * `Routing.Book` e `Routing.Book.Chapter1` identificano rispettivamente i nomi che il controller `BookController` e la sua action `Chapter1` assumeranno nella barra degli indirizzi del browser;
+ * `Query.comments` serve a localizzare il nome di parametri querystring.
 
 ### Impostazione della Culture appropriata
 In questa applicazione, la lingua viene fornita attraverso il percorso in questa forma: `/lingua/NomeController/NomeAction`, cioè ad esempio: `/it/Libro/Capitolo1`
@@ -138,6 +142,21 @@ Comunque, a questo punto, un tag `a` come il seguente:
 Produrrà il seguente output, ovvero il risultato voluto.
 ```html
 <a href="/it/Libro/Capitolo1">1</a>
+```
+### Generazione dei link con parametri querystring
+Vediamo anche un altro esempio in cui viene localizzato **anche un parametro querystring**. Un tag `a` come il seguente:
+```html
+<a asp-route-language="it" asp-controller="Book" asp-action="Chapter1" asp-route-comments="1">1</a>
+```
+Produrrà il seguente output...
+```html
+<a href="/it/Libro/Capitolo1?commenti=1">1</a>
+```
+...purché nel file di risorse per l'italiano sia stata indicata una voce come la seguente. Notare il prefisso `Query.` che in questa applicazione designa i nomi dei parametry querystring. I nomi dei parametri querystring sono case-sensitive.
+```
+<data name="Query.comments" xml:space="preserve">
+  <value>commenti</value>
+</data>
 ```
 
 ### Riscrittura dei percorsi localizzati

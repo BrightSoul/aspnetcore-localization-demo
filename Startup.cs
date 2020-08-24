@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Routing;
 using AspnetcoreLocalizationDemo.Models.Localization;
+using AspnetcoreLocalizationDemo.Models.Services;
 
 namespace AspnetcoreLocalizationDemo
 {
@@ -41,6 +42,7 @@ namespace AspnetcoreLocalizationDemo
             services.AddTransient<IStringLocalizer, ResourceBasedLocalizer>();
             services.AddSingleton<IEnumerable<CultureInfo>>(supportedCultures);
             services.AddSingleton<LocalizationTransformer>();
+            services.AddSingleton<ICommentRepository, InMemoryCommentRepository>();
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
